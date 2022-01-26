@@ -32,6 +32,27 @@ refs
 
 This will have the same behaviour as `refs read references.json`.
 
+### Add
+If you don't want to edit the JSON file to add a new reference, you can use the
+`add` command. If you have a JSON file saved (using `save`):
+
+```bash
+refs add
+```
+or
+```bash
+refs add article
+```
+
+You can also pass in a file to add it to:
+
+```bash
+refs add article file.json
+```
+
+This will take you to some prompts for input. Fields like `volume`, `issue`, `page` and
+`wos_link` are optional.
+
 ### -u
 The `-u` flag will print out the references unstyled (see showcase gif).
 
@@ -99,7 +120,8 @@ For a **web** reference, a `web_link` is required.
 `[3] Belleflame, P., Lambert, T. & Schwienbacher, A. (2010). Crowdfunding: An Industrial Organization Perspective. Retrieved from https://www.economix.fr/uploads/source/doc/workshops/2010_dbm/Belleflamme_al.pdf.`
 
 ## Download
-Copy this repository and go into `/usr/local/bin`, then run
+Copy this repository using `git clone https://github.com/Jomy10/refs` and go into
+your `/usr/local/bin`, then run
 
 ```bash
 ln -s refs /path/to/copied/repo/src/cli.rb

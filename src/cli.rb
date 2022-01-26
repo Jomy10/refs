@@ -11,6 +11,10 @@
 # COMMANDS
 # read [file]   Reads the file
 # save [file]   Saves the path for easy access using `refs`
+# add <type> <file>
+#               Add a reference to either the saved file, or the file given via
+#               the parameter. The type specifies the article type. The default
+#               is article.
 #
 # FLAGS
 # -u            Outputs the references without styling
@@ -53,6 +57,8 @@ class CLI
           @help = true
         when "--help"
           @help = true
+        when "add"
+          @subcommand = :add
         end
       else
         # Parse arguments for subcommand
@@ -68,6 +74,14 @@ class CLI
         elsif @subcommand == :index
           @select = var
           @subcommand = nil
+        elsif @subcommand == :add
+          if var == "article"
+            @subcommand = :add_article
+          elsif var == "web"
+            @subcommand = :add_web
+          end
+        elsif @subcommand == :add_article
+          @refs_path = var
         else
           raise RuntimeError.new("Unkwown subcommand")
         end
@@ -96,11 +110,85 @@ class CLI
       # else
       #   puts refs[/\[#{@select}\] .*/]
       # end
+    elsif @subcommand == :add || @subcommand == :add_article
+      # Default: article
+      File.open(@refs_path, 'r+') do |f|
+        # Remove last line
+        last_line = 0
+        f.each { last_line = f.pos unless f.eof? }
+        f.seek(last_line, IO::SEEK_SET) # Puts the "cursor" on the start of the last line
+        f << add_article()
+        f << "]"
+      end
+    elsif @subcommand == :add_web
+      raise RuntimeError("Web references have not been implemented, you can manually add them to your files")
     else
-      puts "You might have a syntax error in your command"
+      if @subcommand != :stored
+        puts "You might have a syntax error in your command"
+      end
     end
 
   end
+end
+
+# Returns a JSON object
+def add_article()
+  print "(Title) "
+  $stdout.flush
+  title = STDIN.gets.chomp
+
+  print "(Authors (in quotes, separated by commas)) "
+  $stdout.flush
+  authors = STDIN.gets.chomp
+
+  print "(Year) "
+  $stdout.flush
+  year = STDIN.gets.chomp
+
+  print "(Journal) "
+  $stdout.flush
+  journal = STDIN.gets.chomp
+
+  print "(Volume) "
+  $stdout.flush
+  volume = STDIN.gets.chomp
+
+  print "(Issue) "
+  $stdout.flush
+  issue = STDIN.gets.chomp
+
+  print "(Page) "
+  $stdout.flush
+  page = STDIN.gets.chomp
+
+  print "(wos_link) "
+  $stdout.flush
+  wos = STDIN.gets.chomp
+
+  print "(Used) "
+  $stdout.flush
+  used = STDIN.gets.chomp
+
+  # TODO: automatic
+  print "(Uid) "
+  $stdout.flush
+  uid = STDIN.gets.chomp
+
+  s = String.new()
+  s << "  , {\n"
+  s << "    \"title\": \"#{title}\",\n"
+  s << "    \"authors\": [#{authors}],\n"
+  s << "    \"year\": \"#{year}\",\n"
+  s << "    \"journal\": \"#{journal}\",\n"
+  volume != "" ? s << "    \"volume\": #{volume},\n" : nil
+  issue != "" ? s << "    \"issue\": #{issue},\n" : nil
+  page != "" ? s << "    \"page\": \"#{page}\",\n" : nil
+  wos != "" ? s << "    \"wos_link\": \"#{wos}\",\n" : nil
+  s << "    \"used\": #{used},\n"
+  s << "    \"uid\": #{uid},\n"
+  s << "    \"type\": \"article\"\n"
+  s << "  }\n"
+  s
 end
 
 def read(file, styled)

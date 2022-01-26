@@ -6,7 +6,8 @@
     "pattern": "refs [COMMAND] [ARGS] <FLAGS>",
     "commands": [
       "read [file]": "Reads the file",
-      "save [file]": "Saves the path for easy access using `refss`"
+      "save [file]": "Saves the path for easy access using `refss`",
+      "add <type> <file>": "Add a reference to either the saved file, or the file given via the parameter. The type specifies the article type. The default is article. "
     ],
     "flags": [
       "-u": "Outputs the references without styling",
