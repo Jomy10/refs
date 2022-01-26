@@ -40,7 +40,7 @@ The `-i` flag will print out the reference with the specified index.
 
 
 
-That is currently it for this cli, more things coming like adding a new reference to the file via the command line, printing out the short reference for referencing inside of your text, adding an new reference using bibtex, etc.
+That is currently it for this cli, more things coming like adding a new reference to the file via the command line, printing out the short reference for referencing inside of your text, adding an new reference using bibtex, maybe an installer, etc.
 
 ## Json file
 
@@ -115,3 +115,6 @@ This is more of a personal project I wanted to share, if you have anything to ad
 
 ## License
 This code is licensed under the [MIT license](LICENSE).
+
+
+**If this was helpful for you, consider leaving a star!**

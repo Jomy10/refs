@@ -15,22 +15,22 @@
 # FLAGS
 # -u            Outputs the references without styling
 # -i [index]    Outputs the reference with the specified index
+# -s            Outputs the short version of the reference for referencing
+#               inside of text
 
 require_relative './parser.rb'
 require_relative './OS.rb'
 
 class CLI
-  attr_accessor :stored
-
   def initialize(stored, db_path)
-    @stored = stored
+    @refs_path = stored
     @db_path = db_path
   end
 
   def parse
     # Read stored before all else, just for speed
     if ARGV[0].nil?
-      puts read(@stored, @color)
+      puts read(@refs_path, @color)
       @subcommand = :stored
     end
 
@@ -49,30 +49,45 @@ class CLI
           @short = true
         when "--short"
           @short = true
+        when "-h"
+          @help = true
+        when "--help"
+          @help = true
         end
       else
+        # Parse arguments for subcommand
         if @subcommand == :read
-          read(var, @color)
+          @refs_path = var
+          @subcommand = nil
         elsif @subcommand == :save
           # Save the whole path to the config dir
           var = File.expand_path(var)
           File.write(@db_path, var)
+          puts "Saved path for easy access"
+          exit(0)
         elsif @subcommand == :index
-          @subcommand = nil
           @select = var
+          @subcommand = nil
         else
           raise RuntimeError.new("Unkwown subcommand")
         end
       end
     end
 
-    if @subcommand == nil && @select == nil && (@short = nil || !@short)
-      puts read(@stored, @color)
-    elsif @subcommand == nil && (@short = nil || !@short)
-      # Select
-      refs = read(@stored, false)
-      puts refs[/\[#{@select}\] .*/]
-    elsif @short
+    if @help
+      puts "Help is unimplemented"
+      exit(0)
+    end
+
+    if @subcommand.nil? && (@short == nil || !@short)
+      refs = read(@refs_path, @color)
+      if @select == nil
+        puts refs
+      else
+        puts refs[/\[#{@select}\] .*/]
+      end
+    elsif (@subcommand.nil? && @short == true)
+      puts "short version coming soon"
       # TODO
       # Short ref
       # refs = read_short(@stored, @select == nil ? @color : false)
@@ -81,7 +96,10 @@ class CLI
       # else
       #   puts refs[/\[#{@select}\] .*/]
       # end
+    else
+      puts "You might have a syntax error in your command"
     end
+
   end
 end
 

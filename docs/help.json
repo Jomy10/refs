@@ -1,0 +1,17 @@
+{
+  "refs": {
+    "pattern": "refs"
+  },
+  "refs2": {
+    "pattern": "refs [COMMAND] [ARGS] <FLAGS>",
+    "commands": [
+      "read [file]": "Reads the file",
+      "save [file]": "Saves the path for easy access using `refss`"
+    ],
+    "flags": [
+      "-u": "Outputs the references without styling",
+      "-i [index]": "Outputs the reference with the specified index",
+      "-s": "Outputs the short version of the reference for referencing inside of text"
+    ]
+  }
+}
