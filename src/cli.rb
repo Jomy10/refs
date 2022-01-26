@@ -18,23 +18,6 @@
 require_relative './parser.rb'
 require_relative './OS.rb'
 
-# Read file
-# contents = File.read(ARGV[0])
-
-config_dir = OS::Dirs.config
-
-# create dir if not exist
-system 'mkdir', '-p', "#{config_dir}"
-
-# get stored ref db
-stored_path = "#{config_dir}/db"
-
-stored = if File.exists?(stored_path)
-  File.read(stored_path)
-else
-  nil
-end
-
 class CLI
   attr_accessor :stored
 
@@ -104,4 +87,20 @@ def read(file, styled)
 end
 
 # Run
-CLI.new(stored, stored_path).parse
+if __FILE__ == $0
+  config_dir = OS::Dirs.config
+
+  # create dir if not exist
+  system 'mkdir', '-p', "#{config_dir}"
+
+  # get stored ref db
+  stored_path = "#{config_dir}/db"
+
+  stored = if File.exists?(stored_path)
+    File.read(stored_path)
+  else
+    nil
+  end
+
+  CLI.new(stored, stored_path).parse
+end

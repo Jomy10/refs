@@ -24,7 +24,7 @@ refs save references.json
 
 Saves the file path in the config directory for easy acces:
 
-When you no call
+When you now call
 
 ```bash
 refs
@@ -58,7 +58,7 @@ There are currently 2 types of references:
 ```json
 {
   "title": "Crowdfunding: tapping the right crowd",
-  "authors": ["Belleflamme P.", "Lambert T.", "Schwienbacher A."],
+  "authors": ["Belleflamme, P.", "Lambert, T.", "Schwienbacher, A."],
   "year": "2014",
   "journal": "Journal of busines venturing",
   "volume": 29,
@@ -72,6 +72,8 @@ There are currently 2 types of references:
 ```
 
 `wos_link` is an optional field that will be ignored. `used` is used to determine the color of the reference. The `type` field is used to identify the type of the reference. `volume`, `issue` and `page` are optional and are respectively and integer, an integer and a string.
+
+`[1] Belleflamme, P., Lambert, T. & Schwienbacher, A. (2014). Crowdfunding: tapping the right crowd. Journal of busines venturing, 29(5), 585-609.`
 
 ### Web
 
@@ -88,6 +90,8 @@ There are currently 2 types of references:
 ```
 
 For a **web** reference, a `web_link` is required.
+
+`[3] Belleflame, P., Lambert, T. & Schwienbacher, A. (2010). Crowdfunding: An Industrial Organization Perspective. Retrieved from https://www.economix.fr/uploads/source/doc/workshops/2010_dbm/Belleflamme_al.pdf.`
 
 ## Questions
 If you have any questions, feel free to open an issue.
