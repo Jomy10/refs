@@ -35,6 +35,11 @@ This will have the same behaviour as `refs read references.json`.
 ### -u
 The `-u` flag will print out the references unstyled (see showcase gif).
 
+### -i
+The `-i` flag will print out the reference with the specified index.
+
+
+
 That is currently it for this cli, more things coming like adding a new reference to the file via the command line, printing out the short reference for referencing inside of your text, adding an new reference using bibtex, etc.
 
 ## Json file
@@ -92,6 +97,15 @@ There are currently 2 types of references:
 For a **web** reference, a `web_link` is required.
 
 `[3] Belleflame, P., Lambert, T. & Schwienbacher, A. (2010). Crowdfunding: An Industrial Organization Perspective. Retrieved from https://www.economix.fr/uploads/source/doc/workshops/2010_dbm/Belleflamme_al.pdf.`
+
+## Download
+Copy this repository and go into `/usr/local/bin`, then run
+
+```bash
+ln -s refs /path/to/copied/repo/src/cli.rb
+```
+
+You will need to have [Ruby](https://www.ruby-lang.org/en/downloads/) installed.
 
 ## Questions
 If you have any questions, feel free to open an issue.

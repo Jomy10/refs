@@ -13,7 +13,8 @@
 # save [file]   Saves the path for easy access using `refs`
 #
 # FLAGS
-# -u            Outputs the sources without styling
+# -u            Outputs the references without styling
+# -i [index]    Outputs the reference with the specified index
 
 require_relative './parser.rb'
 require_relative './OS.rb'
@@ -29,7 +30,7 @@ class CLI
   def parse
     # Read stored before all else, just for speed
     if ARGV[0].nil?
-      read(@stored, @color)
+      puts read(@stored, @color)
       @subcommand = :stored
     end
 
@@ -40,8 +41,14 @@ class CLI
           @subcommand = :read
         when "save"
           @subcommand = :save
-        when "-u" # Uncolered output
+        when "-u" # Uncolored output
           @color = false
+        when "-i"
+          @subcommand = :index
+        when "-s"
+          @short = true
+        when "--short"
+          @short = true
         end
       else
         if @subcommand == :read
@@ -50,14 +57,30 @@ class CLI
           # Save the whole path to the config dir
           var = File.expand_path(var)
           File.write(@db_path, var)
+        elsif @subcommand == :index
+          @subcommand = nil
+          @select = var
         else
           raise RuntimeError.new("Unkwown subcommand")
         end
       end
     end
 
-    if @subcommand == nil
-      read(@stored, @color)
+    if @subcommand == nil && @select == nil && (@short = nil || !@short)
+      puts read(@stored, @color)
+    elsif @subcommand == nil && (@short = nil || !@short)
+      # Select
+      refs = read(@stored, false)
+      puts refs[/\[#{@select}\] .*/]
+    elsif @short
+      # TODO
+      # Short ref
+      # refs = read_short(@stored, @select == nil ? @color : false)
+      # if @select == nil
+      #   puts refs
+      # else
+      #   puts refs[/\[#{@select}\] .*/]
+      # end
     end
   end
 end
@@ -69,21 +92,24 @@ def read(file, styled)
 
   parsed =  FullParser.new(contents).parse_references
 
+  s = String.new()
   if parsed.respond_to?("each")
     for key, ref in parsed
       if styled
         if ref.used
-          puts "[#{key}] \e[36m#{ref.ref}\e[0m"
+          s += "[#{key}] \e[36m#{ref.ref}\e[0m"
         else
-          puts "[#{key}] \e[31m#{ref.ref}\e[0m"
+          s += "[#{key}] \e[31m#{ref.ref}\e[0m"
         end
       else
-        puts "[#{key}] #{ref.ref}"
+        s += "[#{key}] #{ref.ref}"
       end
+      s += "\n"
     end
   else
-    puts "\e[36mNOTE\e[31m: Not yet supported"
+    raise RuntimError.new("\e[36mNOTE\e[31m: Not yet supported")
   end
+  s
 end
 
 # Run

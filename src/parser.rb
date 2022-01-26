@@ -1,5 +1,3 @@
-#!/usr/bin/ruby
-# Arguments: ARGV[x]
 require 'json'
 
 Reference = Struct.new(:used, :ref)
@@ -7,7 +5,7 @@ Reference = Struct.new(:used, :ref)
 # Parses the json to full reference format
 class FullParser
   def initialize(contents)
-    # remove comments (not actually necessarry apparently)
+    # remove comments (not actually necessary for this JSON parser)
     # comment = /\A *\/\/ *\w*/
     # contents = contents.lines.map(&->(line) {
     #     if !(line =~ comment)

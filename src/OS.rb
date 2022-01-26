@@ -1,4 +1,3 @@
-#!/usr/bin/ruby
 
 # https://stackoverflow.com/a/171011/14874405
 
