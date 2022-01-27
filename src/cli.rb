@@ -1,4 +1,5 @@
 #!/usr/bin/ruby
+
 # References CLI
 #
 # Authors: Jonas Everaert <info@jonaseveraert.be>
@@ -15,12 +16,15 @@
 #               Add a reference to either the saved file, or the file given via
 #               the parameter. The type specifies the article type. The default
 #               is article.
+# get           Prints out the path to the currently saved file
 #
 # FLAGS
 # -u            Outputs the references without styling
 # -i [index]    Outputs the reference with the specified index
 # -s            Outputs the short version of the reference for referencing
 #               inside of text
+# -c            Counts the amount of references
+# -o            Only shows used sources. 
 
 require_relative './parser.rb'
 require_relative './OS.rb'
@@ -33,11 +37,13 @@ class CLI
 
   def parse
     # Read stored before all else, just for speed
-    if ARGV[0].nil?
-      puts read(@refs_path, @color)
-      @subcommand = :stored
-    end
+    # if ARGV[0].nil?
+    #   puts read(@refs_path, @color)
+    #   @subcommand = :stored
+    # end
 
+    # TODO: better parsing, e.g. when starts with - followed by a letter, parse each letter as an argument
+    # Determine action
     ARGV.each_with_index do |var, idx|
       if @subcommand == nil
         case var
@@ -45,20 +51,33 @@ class CLI
           @subcommand = :read
         when "save"
           @subcommand = :save
-        when "-u" # Uncolored output
-          @color = false
-        when "-i"
-          @subcommand = :index
-        when "-s"
+        when "--short" # -s
           @short = true
-        when "--short"
-          @short = true
-        when "-h"
-          @help = true
-        when "--help"
-          @help = true
+        when "--help" # -h
+          @subcommand = :help
         when "add"
           @subcommand = :add
+        when "get"
+          @subcommand = :get_file
+        else
+          if var.match(/-[a-zA-Z]+/)
+            var.chars do |char|
+              case char
+              when 'u'
+                @color = false
+              when 'i'
+                @subcommand = :index 
+              when 's'
+                @short = true
+              when 'h'
+                @subcommand = :help
+              when 'c'
+                @subcommand = :count
+              when 'o'
+                @only_used = true
+              end
+            end
+          end
         end
       else
         # Parse arguments for subcommand
@@ -88,13 +107,9 @@ class CLI
       end
     end
 
-    if @help
-      puts "Help is unimplemented"
-      exit(0)
-    end
-
+    # Perform the action
     if @subcommand.nil? && (@short == nil || !@short)
-      refs = read(@refs_path, @color)
+      refs = read(@refs_path, @color, @only_used)
       if @select == nil
         puts refs
       else
@@ -121,7 +136,14 @@ class CLI
         f << "]"
       end
     elsif @subcommand == :add_web
-      raise RuntimeError("Web references have not been implemented, you can manually add them to your files")
+      add_web()
+    elsif @subcommand == :get_file
+      puts @refs_path
+    elsif @subcommand == :help
+      puts "Help is unimplemented"
+    elsif @subcommand == :count
+      refs = read(@refs_path, @color, @only_used)
+      puts refs.lines.count
     else
       if @subcommand != :stored
         puts "You might have a syntax error in your command"
@@ -132,7 +154,7 @@ class CLI
 end
 
 # Returns a JSON object
-def add_article()
+def add_article
   print "(Title) "
   $stdout.flush
   title = STDIN.gets.chomp
@@ -191,12 +213,16 @@ def add_article()
   s
 end
 
-def read(file, styled)
+def add_web
+  raise RuntimeError("Web references have not been implemented, you can manually add them to your files")
+end
+
+def read(file, styled, only_used)
   styled = styled == nil ? true : styled
 
   contents = File.read(file)
 
-  parsed =  FullParser.new(contents).parse_references
+  parsed = FullParser.new(contents).parse_references
 
   s = String.new()
   if parsed.respond_to?("each")
@@ -215,7 +241,18 @@ def read(file, styled)
   else
     raise RuntimError.new("\e[36mNOTE\e[31m: Not yet supported")
   end
-  s
+
+  if only_used 
+    val = String.new()
+    s.lines do |line|
+      if line.match(/\e\[36m/)
+        val += line
+      end
+    end
+    val
+  else
+    s
+  end
 end
 
 # Run
@@ -224,6 +261,7 @@ if __FILE__ == $0
 
   # create dir if not exist
   system 'mkdir', '-p', "#{config_dir}"
+  # exec
 
   # get stored ref db
   stored_path = "#{config_dir}/db"
