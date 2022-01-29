@@ -21,10 +21,13 @@
 # FLAGS
 # -u            Outputs the references without styling
 # -i [index]    Outputs the reference with the specified index
-# -s            Outputs the short version of the reference for referencing
+# -s, --short   Outputs the short version of the reference for referencing
 #               inside of text
 # -c            Counts the amount of references
 # -o            Only shows used sources. 
+# -r, --search  Searches the references. Accepts regex as an argument
+# -n            Outputs the references without numbers
+# -h, --help    Prints this help message.
 
 require_relative './parser.rb'
 require_relative './OS.rb'
@@ -45,7 +48,9 @@ class CLI
     # TODO: better parsing, e.g. when starts with - followed by a letter, parse each letter as an argument
     # Determine action
     ARGV.each_with_index do |var, idx|
-      if @subcommand == nil
+      # These subcommands can take multiple arguments, that's why you could go to else block
+      # This is currently not perfect and I will rewrite it soon
+      if [:read, :save, :add, :add_article, :add_web, :index, :search].all? { |cond| @subcommand != cond } 
         case var
         when "read"
           @subcommand = :read
@@ -59,6 +64,8 @@ class CLI
           @subcommand = :add
         when "get"
           @subcommand = :get_file
+        when "--search"
+          @subcommand = :search
         else
           if var.match(/-[a-zA-Z]+/)
             var.chars do |char|
@@ -75,6 +82,10 @@ class CLI
                 @subcommand = :count
               when 'o'
                 @only_used = true
+              when 'r'
+                @subcommand = :search
+              when 'n'
+                @add_numbers = false
               end
             end
           end
@@ -101,6 +112,8 @@ class CLI
           end
         elsif @subcommand == :add_article
           @refs_path = var
+        elsif @subcommand == :search
+          @search_for = var
         else
           raise RuntimeError.new("Unkwown subcommand")
         end
@@ -109,7 +122,7 @@ class CLI
 
     # Perform the action
     if @subcommand.nil? && (@short == nil || !@short)
-      refs = read(@refs_path, @color, @only_used)
+      refs = read(@refs_path, @color, @only_used, @add_numbers)
       if @select == nil
         puts refs
       else
@@ -144,6 +157,15 @@ class CLI
     elsif @subcommand == :count
       refs = read(@refs_path, @color, @only_used)
       puts refs.lines.count
+    elsif @subcommand == :search
+      refs = read(@refs_path, @color, @only_used)
+      matches = String.new()
+      refs.lines do |line|
+        if line.match(Regexp.new @search_for)
+          matches += line
+        end
+      end
+      puts matches
     else
       if @subcommand != :stored
         puts "You might have a syntax error in your command"
@@ -217,7 +239,10 @@ def add_web
   raise RuntimeError("Web references have not been implemented, you can manually add them to your files")
 end
 
-def read(file, styled, only_used)
+def read(file, styled, only_used, add_numbers = true)
+  if add_numbers == nil
+    add_numbers = true
+  end  
   styled = styled == nil ? true : styled
 
   contents = File.read(file)
@@ -229,30 +254,50 @@ def read(file, styled, only_used)
     for key, ref in parsed
       if styled
         if ref.used
-          s += "[#{key}] \e[36m#{ref.ref}\e[0m"
+          if !add_numbers
+            s += "\e[36m#{ref.ref}\e[0m"
+          else
+            s += "[#{key}] \e[36m#{ref.ref}\e[0m"
+          end
         else
-          s += "[#{key}] \e[31m#{ref.ref}\e[0m"
+          if !only_used
+            if !add_numbers
+              s += "\e[31m#{ref.ref}\e[0m"
+            else
+              s += "[#{key}] \e[31m#{ref.ref}\e[0m"
+            end
+          end
         end
       else
-        s += "[#{key}] #{ref.ref}"
+        if !only_used
+          if !add_numbers
+            s += "[#{ref.ref}"
+          else
+            s += "[#{key}] #{ref.ref}"
+          end
+        else
+          if ref.used
+            if !add_numbers
+              s += "[#{ref.ref}"
+            else
+              s += "[#{key}] #{ref.ref}"
+            end
+          end
+        end 
       end
-      s += "\n"
+      if !only_used
+        s += "\n"
+      else
+        if ref.used
+          s += "\n"
+        end
+      end
     end
   else
     raise RuntimError.new("\e[36mNOTE\e[31m: Not yet supported")
   end
 
-  if only_used 
-    val = String.new()
-    s.lines do |line|
-      if line.match(/\e\[36m/)
-        val += line
-      end
-    end
-    val
-  else
-    s
-  end
+  s
 end
 
 # Run
