@@ -6,7 +6,8 @@ It was created as a helper tool for my master thesis.
 
 ![showcase](assets/showcase.gif)
 
-The CLI currently has 2 commands: read and save.
+
+The following commands and flags are available:
 
 ### Read
 
