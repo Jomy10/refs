@@ -20,11 +20,13 @@
 #
 # FLAGS
 # -u            Outputs the references without styling
-# -i [index]    Outputs the reference with the specified index
+# -i <index>    Outputs the reference with the specified index. 
+#               Can be supplied multiple times to get a list of references,
+#               or separate numbers with comma's (no spaces).
 # -s, --short   Outputs the short version of the reference for referencing
 #               inside of text
 # -c            Counts the amount of references
-# -o            Only shows used sources. 
+# -o            Only shows used references. 
 # -r, --search  Searches the references. Accepts regex as an argument
 # -n            Outputs the references without numbers
 # -h, --help    Prints this help message.
@@ -36,20 +38,15 @@ class CLI
   def initialize(stored, db_path)
     @refs_path = stored
     @db_path = db_path
+    # The references selected using -i <index>
+    @select = Array.new
   end
 
   def parse
-    # Read stored before all else, just for speed
-    # if ARGV[0].nil?
-    #   puts read(@refs_path, @color)
-    #   @subcommand = :stored
-    # end
-
-    # TODO: better parsing, e.g. when starts with - followed by a letter, parse each letter as an argument
     # Determine action
     ARGV.each_with_index do |var, idx|
       # These subcommands can take multiple arguments, that's why you could go to else block
-      # This is currently not perfect and I will rewrite it soon
+      # This is currently not perfect and I will rewrite it, probably
       if [:read, :save, :add, :add_article, :add_web, :index, :search].all? { |cond| @subcommand != cond } 
         case var
         when "read"
@@ -73,7 +70,7 @@ class CLI
               when 'u'
                 @color = false
               when 'i'
-                @subcommand = :index 
+                @subcommand = :index
               when 's'
                 @short = true
               when 'h'
@@ -102,7 +99,10 @@ class CLI
           puts "Saved path for easy access"
           exit(0)
         elsif @subcommand == :index
-          @select = var
+          input_arr = var.split(",")
+          input_arr.each do |input|
+            @select << input # Append var to select array
+          end
           @subcommand = nil
         elsif @subcommand == :add
           if var == "article"
@@ -123,10 +123,12 @@ class CLI
     # Perform the action
     if @subcommand.nil? && (@short == nil || !@short)
       refs = read(@refs_path, @color, @only_used, @add_numbers)
-      if @select == nil
+      if @select.empty?
         puts refs
       else
-        puts refs[/\[#{@select}\] .*/]
+        @select.each do |sel|
+          puts refs[/\[#{sel}\] .*/]
+        end
       end
     elsif (@subcommand.nil? && @short == true)
       puts "short version coming soon"
@@ -136,7 +138,9 @@ class CLI
       # if @select == nil
       #   puts refs
       # else
-      #   puts refs[/\[#{@select}\] .*/]
+      #   @select.each do |sel|
+      #       puts refs[/\[#{sel}\] .*/]
+      #   end
       # end
     elsif @subcommand == :add || @subcommand == :add_article
       # Default: article
