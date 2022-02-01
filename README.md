@@ -181,6 +181,8 @@ your `/usr/local/bin`, then run
 ln -s refs /path/to/copied/repo/src/cli.rb
 ```
 
+You can also install the cli manually by running ./install.rb inside of the cloned repo
+
 You will need to have [Ruby](https://www.ruby-lang.org/en/downloads/) installed.
 
 ## Questions
