@@ -122,7 +122,7 @@ That is currently it for this cli, more things coming like adding a new referenc
 
 ### Short flags
 
-### -m [ids]
+### -m <ids>
 Reference multiple sources
 
 **Usage**

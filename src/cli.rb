@@ -37,7 +37,7 @@
 # refs short [FLAGS]
 # 
 # FLAGS
-# -m [indexes]  Outputs the reference for referencing multiple works. Specify multiple works 
+# -m <indexes>  Outputs the reference for referencing multiple works. Specify multiple works 
 #               using "," e.g. 4,5,7
 # -t            Sets the type of short reference (def (= default) or par (= parentheses))
 # UNIMPLEMENTED:
