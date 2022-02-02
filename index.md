@@ -1,10 +1,10 @@
-## Refs: References manager CLI
+# Refs: References manager CLI
 
 This cli takes in a json file and spits out references in the APA format.
 
 ## Showcase
 
-![showcase](assets/showcase.gif)
+![showcase](https://github.com/Jomy10/refs/blob/master/assets/showcase.gif)
 
 For usage of the available commands and flags, check the [overview](overview.md).
 
@@ -23,7 +23,7 @@ These are the available templates:
 For more information on the template engine, go to its [dedicated page](templates.md).
 
 ## Download
-Copy the repository using `git clone https://github.com/Jomy10/refs` 
+Copy the repository using `git clone https://github.com/Jomy10/refs`, or you can download it [here](). 
 
 ### Install script
 Go into the copied folder and run `./install.rb`.
@@ -41,6 +41,6 @@ You will need to have [Ruby](https://www.ruby-lang.org/en/downloads/) installed.
 If you have any questions, feel free to open an issue on the [GitHub page](https://github.com/Jomy10/refs/issues)
 
 ## License
-The code is licensed under the [MIT License](https://github.com/jomy10/refs/LICENSE).
+The code is licensed under the [MIT License](https://github.com/Jomy10/refs/blob/master/LICENSE).
 
 **If this was helpful for you, consider leaving a star on [GitHub](https://github.com/jomy10/refs)!**
