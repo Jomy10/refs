@@ -23,7 +23,7 @@ These are the available templates:
 For more information on the template engine, go to its [dedicated page](templates.md).
 
 ## Download
-Copy the repository using `git clone https://github.com/Jomy10/refs`, or you can download it [here](). 
+Copy the repository using `git clone https://github.com/Jomy10/refs`, or you can download it [here](https://github.com/Jomy10/refs/releases). 
 
 ### Install script
 Go into the copied folder and run `./install.rb`.
