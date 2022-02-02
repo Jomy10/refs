@@ -30,6 +30,7 @@
 # -s, --search  Searches the references. Accepts regex as an argument
 # -n            Outputs the references without numbers
 # -h, --help    Prints this help message.
+# -v, --version Prints the version of the cli
 #
 #
 # # Prints out the references in short for for citing references inside of text.
