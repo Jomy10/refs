@@ -1,6 +1,5 @@
 require 'json'
-
-Reference = Struct.new(:used, :ref)
+require_relative './reference.rb'
 
 # Parses the json to full reference format
 class FullParser

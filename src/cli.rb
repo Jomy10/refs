@@ -7,7 +7,7 @@
 #
 # refs          Reads the file set using read
 #
-# refs [COMMAND] [ARGS] <FLAGS>
+# refs [COMMAND] [ARGS] [FLAGS]
 #
 # COMMANDS
 # read [file]   Reads the file
@@ -17,22 +17,39 @@
 #               the parameter. The type specifies the article type. The default
 #               is article.
 # get           Prints out the path to the currently saved file
+# short         Prints out the references in short for for citing references
+#               inside of text. Type refs short -h for more info on flags
 #
 # FLAGS
 # -u            Outputs the references without styling
 # -i <index>    Outputs the reference with the specified index. 
 #               Can be supplied multiple times to get a list of references,
 #               or separate numbers with comma's (no spaces).
-# -s, --short   Outputs the short version of the reference for referencing
-#               inside of text
 # -c            Counts the amount of references
 # -o            Only shows used references. 
-# -r, --search  Searches the references. Accepts regex as an argument
+# -s, --search  Searches the references. Accepts regex as an argument
 # -n            Outputs the references without numbers
 # -h, --help    Prints this help message.
+#
+#
+# # Prints out the references in short for for citing references inside of text.
+#
+# refs short [FLAGS]
+# 
+# FLAGS
+# -m [indexes]  Outputs the reference for referencing multiple works. Specify multiple works 
+#               using "," e.g. 4,5,7
+# -t            Sets the type of short reference (def (= default) or par (= parentheses))
+# UNIMPLEMENTED:
+# -u            Outputs the references without styling
+# -i <index>    Outputs the refernces with the id `index`
+# -o            Only shows used references.  
+# -r, --search  Searches the references. Accepts regex as an argument
+# -n            Outputs the references without numbers
 
 require_relative './parser.rb'
 require_relative './OS.rb'
+require_relative './parser-short.rb'
 
 class CLI
   def initialize(stored, db_path)
@@ -63,6 +80,9 @@ class CLI
           @subcommand = :get_file
         when "--search"
           @subcommand = :search
+        when "short"
+          self.parse_short
+          exit(0)
         else
           if var.match(/-[a-zA-Z]+/)
             var.chars do |char|
@@ -71,15 +91,13 @@ class CLI
                 @color = false
               when 'i'
                 @subcommand = :index
-              when 's'
-                @short = true
               when 'h'
                 @subcommand = :help
               when 'c'
                 @subcommand = :count
               when 'o'
                 @only_used = true
-              when 'r'
+              when 's'
                 @subcommand = :search
               when 'n'
                 @add_numbers = false
@@ -96,7 +114,7 @@ class CLI
           # Save the whole path to the config dir
           var = File.expand_path(var)
           File.write(@db_path, var)
-          puts "Saved path for easy access"
+          STDERR.puts "Saved path for easy access"
           exit(0)
         elsif @subcommand == :index
           input_arr = var.split(",")
@@ -131,7 +149,7 @@ class CLI
         end
       end
     elsif (@subcommand.nil? && @short == true)
-      puts "short version coming soon"
+      STDERR.puts "short version coming soon"
       # TODO
       # Short ref
       # refs = read_short(@stored, @select == nil ? @color : false)
@@ -157,7 +175,7 @@ class CLI
     elsif @subcommand == :get_file
       puts @refs_path
     elsif @subcommand == :help
-      puts "Help is unimplemented"
+      STDERR.puts "Help is unimplemented"
     elsif @subcommand == :count
       refs = read(@refs_path, @color, @only_used)
       puts refs.lines.count
@@ -175,7 +193,68 @@ class CLI
         puts "You might have a syntax error in your command"
       end
     end
+  end
 
+  def parse_short
+    started = false
+    ARGV.each_with_index do |var, idx| 
+      if var.match("short")
+        started = true
+      elsif var.match(/-[a-zA-Z]+/)
+        var.chars do |char|
+          case char
+          when 'u'
+            @color = false
+          when 'm'
+            @subcommand = :multiple
+          when 'i'
+            @subcommand = :index
+          when 'h'
+            @subcommand = :help
+          when 'o'
+            @only_used = true
+          when 'n'
+            @add_numbers = false
+          when 't'
+            @subcommand = :type
+          end
+        end
+      else
+        case @subcommand
+        when :type
+          @type = var
+        when :multiple
+          @multiple = var.split(",")
+        when :index
+          raise RuntimeError.new("-i is unimplemented for short")
+        when :help
+          raise RuntimeError.new("Help is unimplemented")
+        end
+      end
+    end
+    self.execute_short
+  end
+
+  def execute_short
+    refs = if @type.nil? || @type == "def" || @type == "default"
+      result = read_short(@refs_path, @color, @only_used, @add_numbers, :def, @multiple.nil? ? [] : @multiple)
+      if result.respond_to? :each
+        result.each do |id, ref| 
+          puts ref.ref 
+        end
+      else
+        puts result
+      end
+    elsif @type == "par" || @type == "parentheses"
+      result = read_short(@refs_path, @color, @only_used, @add_numbers, :par, @multiple.nil? ? [] : @multiple)
+      if result.respond_to? :each
+        result.each do |id, ref| 
+          puts ref.ref
+        end
+      else
+        puts result
+      end
+    end
   end
 end
 
@@ -244,10 +323,8 @@ def add_web
 end
 
 def read(file, styled, only_used, add_numbers = true)
-  if add_numbers == nil
-    add_numbers = true
-  end  
-  styled = styled == nil ? true : styled
+  add_numbers = add_numbers.nil? ? true : add_numbers 
+  styled = styled.nil? ? true : styled
 
   contents = File.read(file)
 
@@ -304,6 +381,31 @@ def read(file, styled, only_used, add_numbers = true)
   s
 end
 
+def read_short(file, styled = true, only_used = false, add_number = true, type = :def, multiple = [])
+  add_numbers = add_numbers.nil? ? true : add_numbers
+  styled = styled.nil? ? true : styled
+
+  contents = File.read(file)
+
+  parsed = if type == :def
+    if multiple.empty?
+      ShortParser.new(contents).parse
+    else
+      ShortParser.new(contents).parseMultiple(multiple)
+    end
+  elsif type == :par
+    if multiple.empty?
+      ShortParser.new(contents).parsePar
+    else
+      ShortParser.new(contents).parseMultiplePar(multiple)
+    end
+  end
+
+  # TODO: color, etc. (see read)
+
+  parsed
+end
+
 # Run
 if __FILE__ == $0
   config_dir = OS::Dirs.config
@@ -315,7 +417,7 @@ if __FILE__ == $0
   # get stored ref db
   stored_path = "#{config_dir}/db"
 
-  stored = if File.exists?(stored_path)
+  stored = if File.exist?(stored_path)
     File.read(stored_path)
   else
     nil
