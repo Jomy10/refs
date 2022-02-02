@@ -4,7 +4,7 @@ This cli takes in a json file and spits out references in the APA format.
 
 ## Showcase
 
-![showcase](https://github.com/Jomy10/refs/blob/master/assets/showcase.gif)
+![showcase](https://github.com/Jomy10/refs/raw/master/assets/showcase.gif)
 
 For usage of the available commands and flags, check the [overview](overview.md).
 
