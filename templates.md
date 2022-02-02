@@ -1,3 +1,4 @@
+# Refs templating engine
 There is also a templating engine for replacing citations in your text. For example, writing `[#1]` in your text will replace it with the reference with the corresponding id `1`.
 
 ## Templates

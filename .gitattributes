@@ -1,0 +1,3 @@
+# Exclude from release archives
+assets export-ignore
+docs export-ignore

@@ -1,10 +1,12 @@
-# Refs: References manager CLI
+# Refs: References manager
 
-This cli takes in a json file and spits out references in the APA format.
+The refs cli takes in a json file and returns references in the APA format.
 
 ## Showcase
 
 ![showcase](https://github.com/Jomy10/refs/raw/master/assets/showcase.gif)
+
+## Overview
 
 For usage of the available commands and flags, check the [overview](overview.md).
 
