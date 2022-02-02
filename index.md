@@ -1,37 +1,46 @@
-## Welcome to GitHub Pages
+## Refs: References manager CLI
 
-You can use the [editor on GitHub](https://github.com/Jomy10/refs/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+This cli takes in a json file and spits out references in the APA format.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Showcase
 
-### Markdown
+![showcase](assets/showcase.gif)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+For usage of the available commands and flags, check the [overview](overview.md).
 
-```markdown
-Syntax highlighted code block
+For more information on the Json file, check the (Json file section)(json-file.md)
 
-# Header 1
-## Header 2
-### Header 3
+## Templating engine
 
-- Bulleted
-- List
+There is also a templating engine for replacing citations in your text. For example, writing `[#1]` in your text will replace it with the reference with the corresponding id `1`.
 
-1. Numbered
-2. List
+These are the available templates:
+- `[#1]` -> `(Belleflamme, P. et al., 2014)` <!--Matching refs command: `refs short -t par -m 1`-->
+- `[#1!]` -> `Belleflamme, P. et al. (2014)` <!--Matching refs command: `refs short -m 1` or `refs short -t def -m 1`-->
+- `[#1&2]` -> `(Belleflamme, P. et al., 2014; Paschen, J., 2017)` <!--Matching refs command: `refs short -t par -m 1,2`-->
+- `[#1&2!]` -> `Belleflamme, P. et al. (2014) and Paschen, J. (2017)` <!--Matching refs command: `refs short -m 1,2`-->
 
-**Bold** and _Italic_ and `Code` text
+For more information on the template engine, go to its [dedicated page](templates.md).
 
-[Link](url) and ![Image](src)
+## Download
+Copy the repository using `git clone https://github.com/Jomy10/refs` 
+
+### Install script
+Go into the copied folder and run `./install.rb`.
+
+### Manual installs
+Go into your `/usr/local/bin`, then run
+
+```bash
+ln -s refs /path/to/copied/repo/src/cli.rb
 ```
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+You will need to have [Ruby](https://www.ruby-lang.org/en/downloads/) installed.
 
-### Jekyll Themes
+## Questions
+If you have any questions, feel free to open an issue on the [GitHub page](https://github.com/Jomy10/refs/issues)
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Jomy10/refs/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+## License
+The code is licensed under the [MIT License](https://github.com/jomy10/refs/LICENSE).
 
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+**If this was helpful for you, consider leaving a star on [GitHub](https://github.com/jomy10/refs)!**
