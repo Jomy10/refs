@@ -1,0 +1,16 @@
+1. Move this folder to the desired location
+
+2. Open a terminal inside of this folder. 
+(If you don't know how to do this, head over to https://www.groovypost.com/howto/open-command-window-terminal-window-specific-folder-windows-mac-linux/)
+
+
+3. Type ./install.rb inside of the terminal
+
+4. Follow the instructions
+
+5. Test to see if it worked;
+    - Type refs inside of the terminal and see if it gives you and output
+    - If you installed the templating engine, also try it using refst
+
+6. Head over to https://jomy10.github.io/refs/overview.html for a list of commands and flags
+   you can use.
