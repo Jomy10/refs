@@ -1,2 +1,6 @@
 theme: jekyll-theme-tactile
+
 show_downloads: true
+plugins:
+- jekyll-seo-tag
+author: Jonas Everaert
