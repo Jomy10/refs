@@ -36,6 +36,13 @@ For more information on the template engine, go to its [dedicated page](template
 ## Download
 Copy the repository using `git clone https://github.com/Jomy10/refs`, or you can download it [here](https://github.com/Jomy10/refs/releases). 
 
+<section id="downloads" class="clearfix">
+    <a href="https://github.com/Jomy10/refs/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+    <a href="https://github.com/Jomy10/refs/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+</section>
+
+After you've downloaded the package, do either of the following:
+
 ### Install script
 Go into the copied folder and run `./install.rb`.
 
@@ -47,11 +54,6 @@ ln -s refs /path/to/copied/repo/src/cli.rb
 ```
 
 You will need to have [Ruby](https://www.ruby-lang.org/en/downloads/) installed.
-
-<section id="downloads" class="clearfix">
-    <a href="https://github.com/Jomy10/refs/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-    <a href="https://github.com/Jomy10/refs/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-</section>
 
 ## Questions
 If you have any questions, feel free to open an issue on the [GitHub page](https://github.com/Jomy10/refs/issues)
