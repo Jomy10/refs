@@ -1,4 +1,4 @@
-[< go back](/)
+[< go back](/refs)
 
 ## Json file
 
