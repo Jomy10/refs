@@ -1,3 +1,5 @@
+[download](https://github.com/Jomy10/refs/zipball/master)
+
 # Refs: References manager
 
 The refs cli takes in a json file and returns references in the APA format.
