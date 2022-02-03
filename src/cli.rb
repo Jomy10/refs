@@ -1,12 +1,18 @@
 #!/usr/bin/ruby
 
+require_relative './parser.rb'
+require_relative './OS.rb'
+require_relative './parser-short.rb'
+
 # References CLI
 #
 # Authors: Jonas Everaert <info@jonaseveraert.be>
 # License: MIT
 #
+# ### Refs
 # refs          Reads the file set using read
 #
+# ### Refs [SUBCOMMAND]
 # refs [COMMAND] [ARGS] [FLAGS]
 #
 # COMMANDS
@@ -32,9 +38,8 @@
 # -h, --help    Prints this help message.
 # -v, --version Prints the version of the cli
 #
-#
-# # Prints out the references in short for for citing references inside of text.
-#
+# ### Refs short
+# Prints out the references in short for for citing references inside of text.
 # refs short [FLAGS]
 # 
 # FLAGS
@@ -46,12 +51,8 @@
 # -i <index>    Outputs the refernces with the id `index`
 # -o            Only shows used references.  
 # -r, --search  Searches the references. Accepts regex as an argument
-# -n            Outputs the references without numbers
-
-require_relative './parser.rb'
-require_relative './OS.rb'
-require_relative './parser-short.rb'
-
+# -n            Outputs the references without number
+#
 class CLI
   def initialize(stored, db_path)
     @refs_path = stored

@@ -219,7 +219,7 @@ You will need to have [Ruby](https://www.ruby-lang.org/en/downloads/) installed.
 If you have any questions, feel free to open an issue.
 
 ## Contributing
-This is more of a personal project I wanted to share, if you have anything to add though, feel free to open an issue.
+This is more of a personal project I wanted to share. For my use case it is now mostly done. If you have something to add, or want to implement something that has not been added yet, feel free to open a pull request!
 
 ## License
 This code is licensed under the [MIT license](LICENSE).
