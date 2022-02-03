@@ -1,5 +1,5 @@
 ---
-title: Refs Reference manager
+title: Refs reference manager
 ---
 
 <section id="downloads" class="clearfix">
