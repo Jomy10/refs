@@ -1,6 +1,6 @@
------
-title: Refs - Reference manager
------
+---
+title: Refs: Reference manager
+---
 
 <section id="downloads" class="clearfix">
     <a href="https://github.com/Jomy10/refs/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
@@ -47,6 +47,11 @@ ln -s refs /path/to/copied/repo/src/cli.rb
 ```
 
 You will need to have [Ruby](https://www.ruby-lang.org/en/downloads/) installed.
+
+<section id="downloads" class="clearfix">
+    <a href="https://github.com/Jomy10/refs/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+    <a href="https://github.com/Jomy10/refs/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+</section>
 
 ## Questions
 If you have any questions, feel free to open an issue on the [GitHub page](https://github.com/Jomy10/refs/issues)
