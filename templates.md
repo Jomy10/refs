@@ -1,3 +1,7 @@
+---
+title: Refs templating engine
+---
+
 [< go back](/refs)
 
 # Refs templating engine

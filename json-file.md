@@ -1,3 +1,7 @@
+---
+title: Json references file
+---
+
 [< go back](/refs)
 
 ## Json file
