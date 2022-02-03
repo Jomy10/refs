@@ -43,7 +43,6 @@ Copy the repository using `git clone https://github.com/Jomy10/refs`, or you can
 
 You will need to have [Ruby](https://www.ruby-lang.org/en/downloads/) installed.
 
-
 After you've downloaded the package, do either of the following:
 
 ### Install using script
