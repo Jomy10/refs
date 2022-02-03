@@ -43,7 +43,7 @@ Copy the repository using `git clone https://github.com/Jomy10/refs`, or you can
 
 After you've downloaded the package, do either of the following:
 
-### Install script
+### Install using script
 Go into the copied folder and run `./install.rb`.
 
 ### Manual installs
@@ -54,6 +54,8 @@ ln -s refs /path/to/copied/repo/src/cli.rb
 ```
 
 You will need to have [Ruby](https://www.ruby-lang.org/en/downloads/) installed.
+
+See the [GitHub page](https://github.com/Jomy10/refs) for instructions on Windows.
 
 ## Questions
 If you have any questions, feel free to open an issue on the [GitHub page](https://github.com/Jomy10/refs/issues)
