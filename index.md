@@ -19,7 +19,7 @@ The refs cli takes in a json file and returns references in the APA format.
 
 For usage of the available commands and flags, check the [overview](overview.md).
 
-For more information on the Json file, check the (Json file section)(json-file.md)
+For more information on the Json file, check the [Json file section](json-file.md)
 
 ## Templating engine
 
@@ -41,6 +41,9 @@ Copy the repository using `git clone https://github.com/Jomy10/refs`, or you can
     <a href="https://github.com/Jomy10/refs/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
 </section>
 
+You will need to have [Ruby](https://www.ruby-lang.org/en/downloads/) installed.
+
+
 After you've downloaded the package, do either of the following:
 
 ### Install using script
@@ -52,8 +55,6 @@ Go into your `/usr/local/bin`, then run
 ```bash
 ln -s refs /path/to/copied/repo/src/cli.rb
 ```
-
-You will need to have [Ruby](https://www.ruby-lang.org/en/downloads/) installed.
 
 See the [GitHub page](https://github.com/Jomy10/refs) for instructions on Windows.
 
