@@ -1,4 +1,7 @@
-[download](https://github.com/Jomy10/refs/zipball/master)
+<section id="downloads" class="clearfix">
+    <a href="https://github.com/Jomy10/refs/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+    <a href="https://github.com/Jomy10/refs/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+</section>
 
 # Refs: References manager
 
