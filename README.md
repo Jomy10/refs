@@ -94,15 +94,6 @@ Churchill, N. C. & Lewis, V. L. (1983)
 (Churchill, N. C. & Lewis, V. L., 1983)
 ```
 
-<!--
-Syntax
-
-refs -s 5
-refs -s 5!
-refs -s 5&6&7
-
--->
-
 #### -c
 Counts the amount of references (can be combined with -o to only count used references)
 

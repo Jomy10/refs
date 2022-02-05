@@ -185,7 +185,7 @@ class CLI
       refs = read(@refs_path, @color, @only_used)
       matches = String.new()
       refs.lines do |line|
-        if line.match(Regexp.new @search_for)
+        if line.match(Regexp.new(@search_for, "i"))
           matches += line
         end
       end
