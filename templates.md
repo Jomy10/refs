@@ -33,7 +33,7 @@ An input file might look something like this:
 the output will be:
 
 ```txt
-Belleflamme, P. et al. (2014) states that crowdfunding involves a general request for money ... 
+Belleflamme et al. (2014) states that crowdfunding involves a general request for money ... 
 ```
 
 ## Download 
