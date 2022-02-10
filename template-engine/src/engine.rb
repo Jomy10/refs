@@ -102,31 +102,52 @@ class CLI
 
     def parse_line(line)
         # Match all patterns
-        # It's highly unlikely that the same referene will be cited more than once in one line,
-        # but it's not 0. This does NOT account for that!
-        if match = line[/\[#[0-9]+\!\]/]
-            line = replace_matches_single(line, match)
-        end
-        if match = line[/\[#[0-9]+\]/]
-            line = replace_matches_single_par(line, match)
-        end
-        if match = line[/\[#([0-9]+&)+[0-9]+\!\]/]
-            line = replace_matches_multiple(line, match)
-        end
-        if match = line[/\[#([0-9]+&)+[0-9]+\]/]
-            line = replace_matches_multiple_par(line, match)
-        end
+        matches = Hash.new
+        line.gsub(/\[#[0-9]+\!\]/) {
+            match = Regexp.last_match
+            s = match.to_a[0]
+            matches[Regexp.last_match.offset(0).first] = Match.new(:single_def, s)
+        }
+        line.gsub(/\[#[0-9]+\]/) {
+            match = Regexp.last_match
+            s = match.to_a[0]
+            matches[Regexp.last_match.offset(0).first] = Match.new(:single_par, s)
+        }
+        line.gsub(/\[#([0-9]+&)+[0-9]+\!\]/) {
+            match = Regexp.last_match
+            s = match.to_a[0]
+            matches[Regexp.last_match.offset(0).first] = Match.new(:multiple_def, s)
+        }
+        line.gsub(/\[#([0-9]+&)+[0-9]+\]/) {
+            match = Regexp.last_match
+            s = match.to_a[0]
+            matches[Regexp.last_match.offset(0).first] = Match.new(:multiple_par, s)
+        } 
+        # Sort matches and replace match for each
+        matches.sort_by { |key, _| key }.each { |_, value| 
+            case value.type
+            when :single_def
+                line = replace_matches_single(line, value.match)
+            when :single_par
+                line = replace_matches_single_par(line, value.match)
+            when :multiple_def
+                line = replace_matches_multiple(line, value.match)
+            when :multiple_par
+                line = replace_matches_multiple_par(line, value.match)
+            end
+        }
 
         line
     end
 
-
+    # match: String
     def replace_matches_single(line, match)
         number = match[/[0-9]+/]
         short_ref = @parser.parse(number, !@refs_used.key?(number))
         if not @refs_used.key?(number)
             @refs_used[number] = true
         end
+        # Will always take the first match it finds
         new_line = line.sub(match) { short_ref.strip }
 
         other_match = new_line[/\[#[0-9]+\!\]/]
@@ -206,6 +227,11 @@ class CLI
         end
     end
 end
+
+# Reference match
+# type
+# string
+Match = Struct.new(:type, :match)
 
 if __FILE__ == $0
     stream = if s = ENV["STREAM"]
