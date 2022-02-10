@@ -41,3 +41,7 @@ The second time it appears in the same test:
 ```txt
 Belleflamme et al. (2014) states that crowdfunding involves a general request for money ...
 ```
+
+## A note from the author
+The citation style is based on the recommendations of Ghent University.
+This is because this tool was created for my own master thesis. Feel free to fork the project if your project requires a different style.
