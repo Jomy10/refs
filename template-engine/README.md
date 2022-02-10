@@ -37,7 +37,7 @@ the output will be:
 Belleflamme, Lambert and Schwienbacher (2014) states that crowdfunding involves a general request for money ...
 ```
 
-The second time it appears in the same test: 
+The second time it appears in the same text: 
 ```txt
 Belleflamme et al. (2014) states that crowdfunding involves a general request for money ...
 ```
