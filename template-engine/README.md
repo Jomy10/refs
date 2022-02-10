@@ -8,10 +8,10 @@ For example, `[#1]` will be replaced with `(Belleflamme, Lambert & Schwienbacher
 
 These are the available templates:
 
-- `[#1]` -> `(Belleflamme, Lambert & Schwienbacher, 2014)` <!--Matching refs command: `refs short -t par -m 1`-->
-- `[#1!]` -> `Belleflamme, Lambert and Schwienbacher (2014)` <!--Matching refs command: `refs short -m 1` or `refs short -t def -m 1`-->
-- `[#1&2]` -> `(Belleflamme, Lambert & Schwienbacher, 2014; Paschen, 2017)` <!--Matching refs command: `refs short -t par -m 1,2`-->
-- `[#1&2!]` -> `Belleflamme, Lambert & Schwienbacher, 2014 and Paschen, 2017` <!--Matching refs command: `refs short -m 1,2`-->
+- `[#1]` -> `(Belleflamme, Lambert & Schwienbacher, 2014)`
+- `[#1!]` -> `Belleflamme, Lambert and Schwienbacher (2014)`
+- `[#1&2]` -> `(Belleflamme, Lambert & Schwienbacher, 2014; Paschen, 2017)`
+- `[#1&2!]` -> `Belleflamme, Lambert & Schwienbacher, 2014 and Paschen, 2017`
 
 If there are three or more authors and the reference is cited a second time: `[#1!] ->  Belleflamme et al. (2014)`.
 
