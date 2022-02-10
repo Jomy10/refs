@@ -26,10 +26,11 @@ For more information on the Json file, check the [Json file section](json-file.m
 There is also a templating engine for replacing citations in your text. For example, writing `[#1]` in your text will replace it with the reference with the corresponding id `1`.
 
 These are the available templates:
-- `[#1]` -> `(Belleflamme, P. et al., 2014)` <!--Matching refs command: `refs short -t par -m 1`-->
-- `[#1!]` -> `Belleflamme, P. et al. (2014)` <!--Matching refs command: `refs short -m 1` or `refs short -t def -m 1`-->
-- `[#1&2]` -> `(Belleflamme, P. et al., 2014; Paschen, J., 2017)` <!--Matching refs command: `refs short -t par -m 1,2`-->
-- `[#1&2!]` -> `Belleflamme, P. et al. (2014) and Paschen, J. (2017)` <!--Matching refs command: `refs short -m 1,2`-->
+
+- `[#1]` -> `(Belleflamme, Lambert & Schwienbacher, 2014)`
+- `[#1!]` -> `Belleflamme, Lambert and Schwienbacher (2014)`
+- `[#1&2]` -> `(Belleflamme, Lambert & Schwienbacher, 2014; Paschen, 2017)`
+- `[#1&2!]` -> `Belleflamme, Lambert & Schwienbacher, 2014 and Paschen, 2017`
 
 For more information on the template engine, go to its [dedicated page](templates.md).
 
