@@ -56,9 +56,6 @@ refs add article file.json
 This will take you to some prompts for input. Fields like `volume`, `issue`, `page` and
 `wos_link` are optional.
 
-### Short
-`refs short` will output all references in short form, for citing references inside of text. See [Short flags](#short-flags) for useable flags.
-
 ### Flags
 
 #### -u
@@ -111,27 +108,6 @@ Prints the help message
 
 That is currently it for this cli, more things coming like adding a new reference to the file via the command line, printing out the short reference for referencing inside of your text, adding an new reference using bibtex, maybe an installer, etc.
 
-### Short flags
-
-### -m \<ids\>
-Reference multiple sources
-
-**Usage**
-```bash
-$ refs short -m 1,4
-Belleflamme, P. et al. (2014) and Churchill, N. C. and Lewis, V. L. (1983)
-```
-
-### -t
-Specify a type using `-t def` (default) or `-t par` (parentheses).
-
-**Usage**
-```bash
-$ refs short -t def -m 1
-Belleflamme, P. et al. (2014)
-
-$ refs short -t par -m 1
-(Belleflamme, P. et al., 2014)
 ```
 
 ## Replacing citations in text using templates

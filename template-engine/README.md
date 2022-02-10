@@ -2,16 +2,20 @@
 
 This is a separate CLI tool that depends on the refs cli to replace template citations in text.
 
-For example, `[#1]` will be replaced with `(Belleflamme, P. et al., 2014)`.
+For example, `[#1]` will be replaced with `(Belleflamme, Lambert & Schwienbacher, 2014)`.
 
 ## Templates
 
 These are the available templates:
 
-- `[#1]` -> `(Belleflamme, P. et al., 2014)` <!--Matching refs command: `refs short -t par -m 1`-->
-- `[#1!]` -> `Belleflamme, P. et al. (2014)` <!--Matching refs command: `refs short -m 1` or `refs short -t def -m 1`-->
-- `[#1&2]` -> `(Belleflamme, P. et al., 2014; Paschen, J., 2017)` <!--Matching refs command: `refs short -t par -m 1,2`-->
-- `[#1&2!]` -> `Belleflamme, P. et al. (2014) and Paschen, J. (2017)` <!--Matching refs command: `refs short -m 1,2`-->
+- `[#1]` -> `(Belleflamme, Lambert & Schwienbacher, 2014)` <!--Matching refs command: `refs short -t par -m 1`-->
+- `[#1!]` -> `Belleflamme, Lambert and Schwienbacher (2014)` <!--Matching refs command: `refs short -m 1` or `refs short -t def -m 1`-->
+- `[#1&2]` -> `(Belleflamme, Lambert & Schwienbacher, 2014; Paschen, 2017)` <!--Matching refs command: `refs short -t par -m 1,2`-->
+- `[#1&2!]` -> `Belleflamme, Lambert & Schwienbacher, 2014 and Paschen, 2017` <!--Matching refs command: `refs short -m 1,2`-->
+
+If there are three or more authors and the reference is cited a second time: `[#1!] ->  Belleflamme et al. (2014)`.
+
+References with 6 or more authors will already be abbreviated.
 
 ## Usage
 
@@ -24,11 +28,16 @@ refst "Pass in a string with citations [#1]." > path/to/output_file
 An input file might look something like this:
 
 ```txt
-[#1] states that crowdfunding involves a general request for money ...
+[#1!] states that crowdfunding involves a general request for money ...
 ```
 
 the output will be:
 
 ```txt
-Belleflamme, P. et al. (2014) states that crowdfunding involves a general request for money ... 
+Belleflamme, Lambert and Schwienbacher (2014) states that crowdfunding involves a general request for money ...
+```
+
+The second time it appears in the same test: 
+```txt
+Belleflamme et al. (2014) states that crowdfunding involves a general request for money ...
 ```
