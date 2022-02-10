@@ -19,12 +19,15 @@
 #   STREAM=true     Can be set to false to output the file in one go
 #                   instead of as a stream
 
+require_relative '../../src/parser-short.rb'
+
 VERSION = "0.0.1"
-refs_path = "refs"
+
 
 class CLI
     def initialize(args)
         @args = args
+        @refs_used = Hash.new
     end
 
     def execute(stream)
@@ -68,11 +71,20 @@ class CLI
                     end
                 else
                     if @subcommand == :path
-                        refs_path = arg
+                        @refs_path = arg
                     end
                 end
             end
         end
+
+
+        if @refs_path.nil?
+            # If no path is specified for the db, use the default set by refs
+            @refs_path = `refs get`
+            @refs_path = @refs_path.strip
+        end
+
+        @parser = ShortParser.new(File.read(@refs_path))
     end
 
     def replace_stream(input)
@@ -87,9 +99,12 @@ class CLI
         end
         output
     end
+
     def parse_line(line)
         # Match all patterns
-        if match = line[/\[#[0-9]+\!\]/] 
+        # It's highly unlikely that the same referene will be cited more than once in one line,
+        # but it's not 0. This does NOT account for that!
+        if match = line[/\[#[0-9]+\!\]/]
             line = replace_matches_single(line, match)
         end
         if match = line[/\[#[0-9]+\]/]
@@ -105,10 +120,14 @@ class CLI
         line
     end
 
+
     def replace_matches_single(line, match)
         number = match[/[0-9]+/]
-        short_ref = `refs short -m #{number}`
-        new_line = line.gsub(match) { short_ref.strip }
+        short_ref = @parser.parse(number, !@refs_used.key?(number))
+        if not @refs_used.key?(number)
+            @refs_used[number] = true
+        end
+        new_line = line.sub(match) { short_ref.strip }
 
         other_match = new_line[/\[#[0-9]+\!\]/]
         if other_match.nil?
@@ -120,8 +139,11 @@ class CLI
 
     def replace_matches_single_par(line, match)
         number = match[/[0-9]+/]
-        short_ref = `refs short -t par -m #{number}`
-        new_line = line.gsub(match) { short_ref.strip }
+        short_ref = "(#{@parser.parsePar(number, !@refs_used.key?(number))})"
+        if not @refs_used.key?(number)
+            @refs_used[number] = true
+        end
+        new_line = line.sub(match) { short_ref.strip }
 
         other_match = new_line[/\[#[0-9]+\]/]
         if other_match.nil?
@@ -134,28 +156,53 @@ class CLI
     def replace_matches_multiple(line, match)
         numbers = match[/([0-9]+&)+[0-9]+/]
         numbers = numbers.split('&')
-        short_ref = `refs short -m #{numbers.join(',')}`
-        new_line = line.gsub(match) { short_ref.strip }
+        short_refs = ""
+        numbers.each_with_index do |number, idx|
+            short_ref = @parser.parsePar(number, !@refs_used.key?(number))
+            if not @refs_used.key?(number)
+                @refs_used[number] = true
+            end
+            
+            if idx == 0
+                short_refs << short_ref
+            elsif idx != numbers.length - 1
+                short_refs << ", #{short_ref}"
+            else
+                short_refs << " and #{short_ref}"
+            end
+        end
+        new_line = line.sub(match) { short_refs.strip }
 
         other_match = new_line[/\[#([0-9]+&)+[0-9]+\!\]/]
         if other_match.nil?
             return new_line
         else
-            return replace_matches_single_par(new_line, other_match)
+            return replace_matches_multiple(new_line, other_match)
         end
     end
 
     def replace_matches_multiple_par(line, match)
         numbers = match[/([0-9]+&)+[0-9]+/]
         numbers = numbers.split('&')
-        short_ref = `refs short -t par -m #{numbers.join(',')}`
-        new_line = line.gsub(match) { short_ref.strip }
+        short_refs = "("
+        numbers.each_with_index do |number, idx|
+            short_ref = @parser.parsePar(number, !@refs_used.key?(number))
+            if not @refs_used.key?(number)
+                @refs_used[number] = true
+            end
+            short_refs << short_ref
+            if idx != numbers.length - 1
+                short_refs << "; "
+            end
+        end 
+        short_refs << ")"
+        new_line = line.sub(match) { short_refs.strip }
 
         other_match = new_line[/\[#([0-9]+&)+[0-9]+\]/]
         if other_match.nil?
             return new_line
         else
-            return replace_matches_single_par(new_line, other_match)
+            return replace_matches_multiple_par(new_line, other_match)
         end
     end
 end

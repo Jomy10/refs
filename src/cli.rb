@@ -83,6 +83,7 @@ class CLI
         when "--search"
           @subcommand = :search
         when "short"
+          raise RuntimeError.new "Parsing short references through the cli is no longer supported, please use the template cli"
           self.parse_short
           exit(0)
         else
@@ -207,8 +208,10 @@ class CLI
           case char
           when 'u'
             @color = false
+          when 'r'
+            @subcommand = :references
           when 'm'
-            @subcommand = :multiple
+            @subcommand = :references
           when 'i'
             @subcommand = :index
           when 'h'
@@ -225,8 +228,8 @@ class CLI
         case @subcommand
         when :type
           @type = var
-        when :multiple
-          @multiple = var.split(",")
+        when :references
+          @references = var.split(",")
         when :index
           raise RuntimeError.new("-i is unimplemented for short")
         when :help
@@ -238,24 +241,27 @@ class CLI
   end
 
   def execute_short
+    if @references.nil?
+      raise RuntimeError.new("Please specify a reference id")
+    end
     refs = if @type.nil? || @type == "def" || @type == "default"
-      result = read_short(@refs_path, @color, @only_used, @add_numbers, :def, @multiple.nil? ? [] : @multiple)
-      if result.respond_to? :each
-        result.each do |id, ref| 
-          puts ref.ref 
-        end
-      else
-        puts result
-      end
+      result = read_short(@refs_path, @color, @only_used, @add_numbers, :def, @references)
+      # if result.respond_to? :each
+      #   result.each do |id, ref| 
+      #     puts ref.ref 
+      #   end
+      # else
+      #   puts result
+      # end
     elsif @type == "par" || @type == "parentheses"
-      result = read_short(@refs_path, @color, @only_used, @add_numbers, :par, @multiple.nil? ? [] : @multiple)
-      if result.respond_to? :each
-        result.each do |id, ref| 
-          puts ref.ref
-        end
-      else
-        puts result
-      end
+      result = read_short(@refs_path, @color, @only_used, @add_numbers, :par, @references)
+      # if result.respond_to? :each
+      #   result.each do |id, ref| 
+      #     puts ref.ref
+      #   end
+      # else
+      #   puts result
+      # end
     end
   end
 end
@@ -383,23 +389,24 @@ def read(file, styled, only_used, add_numbers = true)
   s
 end
 
-def read_short(file, styled = true, only_used = false, add_number = true, type = :def, multiple = [])
+# references: reference numbers
+def read_short(file, styled = true, only_used = false, add_number = true, type = :def, references = [])
   add_numbers = add_numbers.nil? ? true : add_numbers
   styled = styled.nil? ? true : styled
 
   contents = File.read(file)
 
   parsed = if type == :def
-    if multiple.empty?
-      ShortParser.new(contents).parse
+    if references.empty?
+      ShortParser.new(contents).parse(references[0])
     else
-      ShortParser.new(contents).parseMultiple(multiple)
+      ShortParser.new(contents).parseMultiple(references)
     end
   elsif type == :par
-    if multiple.empty?
-      ShortParser.new(contents).parsePar
+    if references.empty?
+      ShortParser.new(contents).parsePar(references[0])
     else
-      ShortParser.new(contents).parseMultiplePar(multiple)
+      ShortParser.new(contents).parseMultiplePar(references)
     end
   end
 

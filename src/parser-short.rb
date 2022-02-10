@@ -1,203 +1,186 @@
-    require 'json'
-    require_relative './reference.rb'
+require 'json'
+require_relative './reference.rb'
 
-    # # Short references
-    # [APA-style](https://libguides.murdoch.edu.au/APA/text)
-    # [examples](https://libguides.murdoch.edu.au/APA/examples)
-    # [#5!] = Ward and Ramachandran (2010, December)
-    # [#5] = (Ward & Ramachandran, 2010, December)
-    # [#5&6] = (Ward & Ramachandran (2010, December) and Agrawal et al. (2015))
-    # 3 or more authors -> et al., instead if would create ambiguity (e.g. Name et al (2010) and Name et al. (2010) referring to different papers)
-
-
-    # Parses the json to short reference format
-class ShortParser
+# # Short references
+# [#5!] = Ward and Ramachandran (2010, December)
+# [#5] = (Ward & Ramachandran 2010, December)
+# [#5&6!] = Ward and Ramachandran (2010, December) and Agrawal et al. (2015)
+# [#5&6] = (Ward & Ramachandran (2010, December); Agrawal et al. (2015))
+# 3 or more -> first time: (A, B & C, 1977)
+# Second time -> (A et al., 1977)
+# 6 or more -> (A et al., 1977)
+#
+# contents: String (JSON)
+class ShortParser 
     def initialize(contents)
         @parsed = JSON.parse(contents)
     end
 
-    # [#5!] = Ward and Ramachandran (2010, December)
-    def parse
+    # Parse [#1!] -> Name (year)
+    # reference: int
+    # first: bool
+    def parse(reference, first)
+        @first = first
         @style = :in_text
+        @references = [reference]
         parse_references
     end
 
-    # [#5] = (Ward & Ramachandran, 2010, December) 
-    def parsePar
+    # Parse [#1] -> (Name, year)
+    def parsePar(reference, first)
         @style = :parantheses
-        @sub_style = :single
+        @first = first
+        @references = [reference]
         parse_references
     end
-    
-    # [#5&6!] = Ward and Ramachandran (2020, December) and Agrawal et al. (2015)
-    def parseMultiple(indexes)
-        @style = :in_text
-        parsed = parse_references
-        reference = ""
-        if indexes.respond_to? :each
-            i = 0
-            indexes.each do |index|
-                index = Integer(index)
-                if parsed[index].nil?
-                    raise RuntimeError.new("Found nil at #{index}")
-                    break 
-                end
-                if i == 0
-                    reference << parsed[index].ref
-                    i += 1
-                elsif i == indexes.count - 1
-                    reference << " and #{parsed[index].ref}" 
-                    i += 1
-                else
-                    reference << ", #{parsed[index].ref}"
-                    i += 1
-                end
 
+    private
+    def parse_references
+        if @references.length == 1
+            if @style == :in_text
+                parse_in_text(@references[0], @first)
+            else
+                parse_par(@references[0], @first)
+            end
+        else
+            raise RuntimeError.new "unimplemented"
+            if @style == :in_text
+                puts "1 author, in text"
+            else
+                puts "1 author, parentheses"
+            end 
+        end
+    end
+
+    # Parses one reference in the form of `Authors (year)`
+    # first: bool
+    def parse_in_text(ref_id, first)
+        reference = @parsed.detect { |hash| hash['uid'] == ref_id.to_i }
+        authors = reference["authors"]
+        year = reference["year"]
+
+        # Parse athor name to remove initials
+        authors.map { |author|
+            # TODO: test if is a match before assigning a value
+            if author =~ /,.*/
+                author[/,.*/] = ""
+            end
+            author
+        }
+
+        reference = ""
+        if first 
+            if authors.length >= 6 
+                reference << authors[0]
+                reference << " et al."
+                reference << " (#{year})"
+            else
+                authors.each_with_index do |author, idx|
+                    if authors.length == 1 
+                        reference << author
+                    elsif idx != authors.length - 1
+                        if idx != 0 
+                            reference << ", "
+                        end
+                        reference << author
+                    else 
+                        reference << " and "
+                        reference << author
+                    end
+                end
+                reference << " (#{year})"
+            end
+        else
+            if authors.length >= 3 
+                reference << authors[0]
+                reference << " et al."
+                reference << " (#{year})"
+            else
+                authors.each_with_index do |author, idx|
+                    if authors.length == 1 
+                        reference << author
+                    elsif idx != authors.length - 1
+                        if idx != 0 
+                            reference << ", "
+                        end
+                        reference << author
+                    else 
+                        reference << " and "
+                        reference << author
+                    end
+                end
+                reference << " (#{year})" 
             end
         end
         reference
     end
 
-    # [#5&6] = (Ward & Ramachandran, 2010, December; Agrawal et al., 2015)
-    def parseMultiplePar(indexes)
-        @style = :parantheses
-        @sub_style = :multiple
-        parsed = parse_references
+    # Parses one reference in the form of `Authors, year`.
+    # Parentheses still need to be added 
+    # first: bool
+    def parse_par(ref_id, first)
+        reference = @parsed.detect { |hash| hash['uid'] == ref_id.to_i }
+        authors = reference["authors"]
+        year = reference["year"]
+
+        # Parse athor name to remove initials
+        authors.map { |author|
+            if author =~ /,.*/            
+                author[/,.*/] = ""
+            end
+            author
+        } 
+
         reference = ""
-        if indexes.respond_to? :each
-            i = 0
-            indexes.each do |index|
-                index = Integer(index)
-                if i == 0
-                    reference << parsed[index].ref
-                    i += 1
-                else
-                    reference << "; #{parsed[index].ref}"
-                    i += 1
-
-                end
-            end
-        end
-        "(#{reference})"
-    end
-
-    private
-    # Parses all references
-    def parse_references
-        references = Hash.new()
-
-        for ref in @parsed
-            # References stores the string value of the reference
-            reference = parse_ref(ref)
-
-            references.store(ref["uid"], Reference.new(ref["used"], reference))
-
-        end
-
-        # Look for duplicates
-        references.each do |key, base| 
-            references.each do |key_c, compare|
-                # Compare base and compare
-                if base.ref == compare.ref && key != key_c
-                    STDERR.puts "Found equal references: #{base.ref} and #{compare.ref}"
-                    # If equal, change both to add another author, otherwise, ask the user to append a character to the year
-                    @parsed.each do |ref|
-                        if ref["uid"] == key 
-                            references[key] = parse_more(ref)
-                        elsif ref["uid"] == key_c
-                            references[key_c] = parse_more(ref)
+        if first 
+            if authors.length >= 6 
+                reference << authors[0]
+                reference << " et al."
+                reference << ", #{year}"
+            else
+                authors.each_with_index do |author, idx|
+                    if authors.length == 1 
+                        reference << author
+                    elsif idx != authors.length - 1
+                        if idx != 0
+                            reference << ", "
                         end
+                        reference << author
+                    else
+                        reference << " & "
+                        reference << author
                     end
                 end
+                reference << ", #{year}"
             end
-        end
-        
-        references
-    end
-
-    # Parses one reference
-    def parse_ref(ref) 
-        # TODO: convert to the correct format
-        case @style
-        # [#5!] = Ward and Ramachandran (2010, December)
-        when :in_text
-            return parse_in_text(ref)
-        when :parantheses
-            return parse_parantheses(ref)
-        end
-    end
-
-    def parse_in_text(ref)
-        authors = ref["authors"]
-        if authors.count() < 3
-            author_s = ""
-            if authors.respond_to? :each
-                authors.each_with_index do |author, index|
-                    if index == 0
-                        author_s << author
-                    else 
-                        author_s << " and #{author}"
-                    end
-                end
-            else
-                author_s << authors
-            end
-
-            reference = "#{author_s} (#{ref["year"]})"
-
-            return reference
         else
-            author = authors[0]
-            author << " et al."
-            year = ref["year"]
-
-            reference = "#{author} (#{year})"
-
-            return reference
-        end
-    end
-
-    def parse_parantheses(ref)
-        authors = ref["authors"]
-        if authors.count() < 3
-            author_s = ""
-            if authors.respond_to? :each
-                authors.each_with_index do |author, index|
-                    if index == 0
-                        author_s << author
-                    else 
-                        author_s << " & #{author}"
+            if authors.length >= 3
+                reference << authors[0]
+                reference << " et al."
+                reference << ", #{year}"
+            else
+                authors.each_with_index do |author, idx|
+                    if authors.length == 1 
+                        reference << author
+                    elsif idx != authors.length - 1
+                        if idx != 0
+                            reference << ", "
+                        end
+                        reference << author
+                    else
+                        reference << " & "
+                        reference << author
                     end
                 end
-            else
-                author_s << authors
+                reference << ", #{year}"
             end
-
-            reference = "#{author_s}, #{ref["year"]}"
-
-            if @sub_style == :single
-                reference = "(#{reference})"
-            end
-
-            return reference
-        else
-            author = authors[0]
-            author << " et al."
-            year = ref["year"]
-
-            reference = "#{author}, #{year}"
-            if @sub_style == :single
-                reference = "(#{reference})"
-            end
-
-            return reference
         end
+        reference
     end
+end
 
-    def parse_more(ref) 
-        raise RuntimeError.new("Unimplemented; same authors in same year is unimplemented. Feel free to open a pull request addressing this issue.")
-        case @style
-        when :in_text
-        end
-    end
+# Debugging
+if __FILE__ == $0
+    puts ShortParser.new(File.read("/Users/jonaseveraert/Library/Mobile Documents/com~apple~CloudDocs/Documenten/UGent/Master thesis/Papers/References.json"))
+        .parse(5, false)
 end
