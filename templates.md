@@ -16,6 +16,10 @@ These are the available templates:
 - `[#1&2]` -> `(Belleflamme, Lambert & Schwienbacher, 2014; Paschen, 2017)`
 - `[#1&2!]` -> `Belleflamme, Lambert & Schwienbacher, 2014 and Paschen, 2017`
 
+If there are three or more authors and the reference is cited a second time: `[#1!] ->  Belleflamme et al. (2014)`.
+
+References with 6 or more authors will already be abbreviated.
+
 ## Usage
 
 ```bash
@@ -27,13 +31,18 @@ refst "Pass in a string with citations [#1]." > path/to/output_file
 An input file might look something like this:
 
 ```txt
-[#1] states that crowdfunding involves a general request for money ...
+[#1!] states that crowdfunding involves a general request for money ...
 ```
 
 the output will be:
 
 ```txt
-Belleflamme et al. (2014) states that crowdfunding involves a general request for money ... 
+Belleflamme, Lambert and Schwienbacher (2014) states that crowdfunding involves a general request for money ...
+```
+
+The second time it appears in the same test: 
+```txt
+Belleflamme et al. (2014) states that crowdfunding involves a general request for money ...
 ```
 
 ## Download 
