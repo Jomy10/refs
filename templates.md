@@ -45,6 +45,11 @@ The second time it appears in the same text:
 Belleflamme et al. (2014) states that crowdfunding involves a general request for money ...
 ```
 
+## Listing all references in a text
+```bash
+refst list path/to/file
+```
+
 ## Download 
 To download this cli, you will first need the [refs cli](index.md). You can simply install it using the same method as the refs cli; using `./install.rb`.
 
