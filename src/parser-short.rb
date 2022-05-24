@@ -1,6 +1,8 @@
 require 'json'
 require_relative './reference.rb'
 
+# TODO: warn when two references have the same citation and potentially add (year[a-z]) and/or expand the reference.
+
 # # Short references
 # [#5!] = Ward and Ramachandran (2010, December)
 # [#5] = (Ward & Ramachandran 2010, December)

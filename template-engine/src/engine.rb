@@ -5,7 +5,7 @@
 # © Jonas Everaert 2022
 #
 # USAGE:
-#   refst <input>
+#   refst [subcommand] <input>
 # 
 # ARGS:
 #   <input>         is either a file path, or a string
@@ -14,12 +14,17 @@
 #   -h              Prints this help information
 #   -v, --version   Prints the version of the cli
 #   -p              Sets a custom path for the refs cli
+#
+# SUBCOMMANDS:
+# list <input>      List the references from the input
 # 
-# ENVIRONMENT VARIABLES
+# ENVIRONMENT VARIABLES:
 #   STREAM=true     Can be set to false to output the file in one go
 #                   instead of as a stream
+#
 
 require_relative '../../src/parser-short.rb'
+require 'set'
 
 VERSION = "0.0.1"
 
@@ -179,7 +184,7 @@ class CLI
         numbers = numbers.split('&')
         short_refs = ""
         numbers.each_with_index do |number, idx|
-            short_ref = @parser.parsePar(number, !@refs_used.key?(number))
+            short_ref = @parser.parse(number, !@refs_used.key?(number))
             if not @refs_used.key?(number)
                 @refs_used[number] = true
             end
@@ -228,6 +233,20 @@ class CLI
     end
 end
 
+def listReferences(input)
+    re = /\[#(?<id>\d+)\!?\]/
+    match = input.scan re
+    list = Set.new
+    match.each do |id_arr|
+        id = id_arr[0]
+        list << id
+    end
+        
+    list.each do |id|
+        puts `refs -i #{id}`
+    end
+end
+
 # Reference match
 # type
 # string
@@ -239,10 +258,21 @@ if __FILE__ == $0
     else
         true
     end
-
-    if stream
-        CLI.new(ARGV).execute(stream)
+    
+    if ARGV[0] == "list"
+        input = begin
+            File.read(ARGV[1])
+        rescue Errno::ENOENT
+            ARGV[1]
+        end
+        
+        listReferences(input)
     else
-        puts CLI.new(ARGV).execute(stream)
+
+        if stream
+            CLI.new(ARGV).execute(stream)
+        else
+            puts CLI.new(ARGV).execute(stream)
+        end
     end
 end
