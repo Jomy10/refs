@@ -90,6 +90,6 @@ class FullParser
 
   # TODO: retrieved on
   def parse_webpage
-    "Retrieved from #{@ref["web_link"]}."
+    "#{@ref["web_link"]}."
   end
 end
